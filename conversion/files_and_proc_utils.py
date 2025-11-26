@@ -58,7 +58,7 @@ import os
 import time
 
 import py_win_keyboard_layout
-import pyautogui
+#import pyautogui
 import psutil
 import pygetwindow as gw
 

@@ -29,7 +29,7 @@ import os
 import time
 
 import psutil
-import pyautogui
+#import pyautogui
 import pyperclip
 
 from protocols.league_sert.constants import FRScreens
