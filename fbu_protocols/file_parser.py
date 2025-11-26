@@ -113,9 +113,14 @@ class WordFileParser:
         self.indicators = {}
 
     def get_one_string(self) -> str:
-        """ Прочитать word файл, вернуть одну большую строку. """
-        text = docx2txt.process(self.word_file)
-        return text
+        """Прочитать word файл, вернуть одну большую строку постранично."""
+        document = Document(self.word_file)
+        pages = []
+        for para in document.paragraphs:
+            text = para.text.strip()
+            if text:
+                pages.append(text)
+        return "\n".join(pages)
 
     def convert_file_to_document(self) -> Document:
         """ Прочитать word файл, преобразовать для работы с таблицами в
@@ -133,19 +138,20 @@ class WordFileParser:
                 self.data[key.name] = match.group(2).strip() if match else ''
 
     def get_indicators(self) -> None:
-        """ Пройтись по таблицам с результатами исследований и собрать
-        данные по ним и сохранить в поле 'indicators'.
-        Результат будет сохранен в виде словаря, где ключ - наименование
-        показателя, значение - tuple из нормы и результата исследования. """
-        # Цикл по таблицам документа.
-        for table_ in self.document_with_tables.tables:
-            # Проверка на наличие в таблице более двух строк и колонок.
-            if len(table_.rows) > 1 and len(table_.columns) > 2:
-                # Цикл по строкам в таблице, начиная со второй.
-                for _, row in enumerate(table_.rows[1:], start=1):
-                    # Поучаем и распаковываем словарь из одного показателя.
-                    sub_indicators = process_one_indic(row.cells)
-                    self.indicators = {**self.indicators, **sub_indicators}
+      """ Пройтись по таблицам с результатами исследований и собрать
+      # данные по ним и сохранить в поле 'indicators'.
+      # Результат будет сохранен в виде словаря, где ключ - наименование
+      # показателя, значение - tuple из нормы и результата исследования. """
+      # # Цикл по таблицам документа.
+      # for table_ in self.document_with_tables.tables:
+      #     # Проверка на наличие в таблице более двух строк и колонок.
+      #     if len(table_.rows) > 1 and len(table_.columns) > 2:
+      #         # Цикл по строкам в таблице, начиная со второй.
+      #         for _, row in enumerate(table_.rows[1:], start=1):
+      #             # Поучаем и распаковываем словарь из одного показателя.
+      #             sub_indicators = process_one_indic(row.cells)
+      #             self.indicators = {**self.indicators, **sub_indicators}
+      return
 
     def get_all_required_data_from_word_file(self):
         """ Основной метод - направленный на изъятие данных из Word файла."""

@@ -40,47 +40,53 @@ def downscale_if_needed(img: Image.Image, max_side: int = 1800) -> Image.Image:
 
 def ocr_page_surya(pil_img: Image.Image,
                    rec: RecognitionPredictor,
-                   det: DetectionPredictor) -> str:
+                   det: DetectionPredictor):
     """
     OCR одной страницы Surya.
-    Возвращает склеенный построчно текст (сверху-вниз, слева-направо).
+    Возвращает список строк с bbox:
+    [
+      {"text": "...", "bbox": [x0, y0, x1, y1]},
+      ...
+    ]
     """
-    # В новых версиях: rec([...], det_predictor=det) -> List[OCRResult]
     results = rec([pil_img], det_predictor=det)
-    ocr_res = results[0]  # OCRResult
+    ocr_res = results[0]
 
-    # У OCRResult есть .text_lines — список объектов TextLine (у каждого .text, .bbox)
     lines = getattr(ocr_res, "text_lines", []) or []
 
-    # Отсортируем по bbox: сначала по y, затем по x
     def sort_key(line):
-        # bbox = [x0, y0, x1, y1]
         b = getattr(line, "bbox", [0, 0, 0, 0])
         return (b[1], b[0])
 
-    pieces = []
+    output = []
     for ln in sorted(lines, key=sort_key):
-        t = (getattr(ln, "text", "") or "").strip()
-        if t:
-            pieces.append(t)
+        text = (getattr(ln, "text", "") or "").strip()
+        bbox = getattr(ln, "bbox", [0, 0, 0, 0])
+        if text:
+            output.append({"text": text, "bbox": bbox})
 
-    return "\n".join(pieces)
+    return output
+
 
 
 def convert_pdf_to_docx_surya(pdf_path: Path, out_dir: Path, dpi: int = 240, max_side: int = 1800) -> Path:
+    """Конвертация PDF → DOCX + сохранение OCR JSON по страницам."""
     t0 = time.time()
     out_dir.mkdir(parents=True, exist_ok=True)
+
     docx_path = out_dir / (pdf_path.stem + ".docx")
 
-    # Инициализация моделей один раз на документ
-    foundation = FoundationPredictor()                 # базовая фича-сеть
-    rec = RecognitionPredictor(foundation)             # распознавание текста
-    det = DetectionPredictor()                         # детекция текстовых блоков
+    # ----- Инициализация моделей один раз -----
+    foundation = FoundationPredictor()
+    rec = RecognitionPredictor(foundation)
+    det = DetectionPredictor()
 
     word_doc = Document()
+
     with fitz.open(pdf_path) as doc:
         total = len(doc)
         print(f"\n=== Обрабатываю: {pdf_path.name} ===")
+
         for i, page in enumerate(doc, 1):
             t_page = time.time()
 
@@ -88,14 +94,27 @@ def convert_pdf_to_docx_surya(pdf_path: Path, out_dir: Path, dpi: int = 240, max
             img = downscale_if_needed(img, max_side=max_side)
 
             try:
-                text = ocr_page_surya(img, rec, det)
-                status = f"{'пусто' if not text.strip() else 'ok'}, символов: {len(text)}"
+                page_data = ocr_page_surya(img, rec, det)   # now returns list of dicts
+                status = f"ok, строк: {len(page_data)}"
             except Exception as e:
-                text = ""
+                page_data = []
                 status = f"ошибка: {e}"
 
+            # ----- ✅ сохраняем JSON -----
+            json_path = out_dir / f"{pdf_path.stem}_page_{i}.json"
+            import json
+            with open(json_path, "w", encoding="utf-8") as f:
+                json.dump(page_data, f, ensure_ascii=False, indent=2)
+
+            # ----- запись в DOCX только для проверки -----
             word_doc.add_paragraph(f"[Страница {i}/{total}]")
-            word_doc.add_paragraph(text if text.strip() else "(Пусто / не распознано)")
+
+            if page_data:
+                for line in page_data:
+                    word_doc.add_paragraph(line["text"])
+            else:
+                word_doc.add_paragraph("(Пусто / не распознано)")
+
             if i < total:
                 word_doc.add_page_break()
 
@@ -103,8 +122,8 @@ def convert_pdf_to_docx_surya(pdf_path: Path, out_dir: Path, dpi: int = 240, max
 
     word_doc.save(docx_path)
     print(f"[OK] {pdf_path.name} → {docx_path.name} за {time.time() - t0:.1f} c")
-    return docx_path
 
+    return docx_path
 
 def batch_convert(folder: Path, out_dir: Path, dpi: int = 240, max_side: int = 1800):
     """Пакетная обработка: модели инициализируем один раз и используем для всех PDF."""
