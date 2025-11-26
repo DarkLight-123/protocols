@@ -1,9 +1,9 @@
 """Тестирование парсинга текста из word файлов. """
 
 import pytest
-from protocols.league_sert.data_preparation.file_parser import MainCollector
-from protocols.league_sert.data_preparation.launch_data_preparation import extract_and_prepare_data
-from protocols.tests.test_league_sert.test_data_preparaton.constants import TEST_WORD_FILES, COLLECTORS
+from league_sert.data_preparation.file_parser import MainCollector
+from league_sert.data_preparation.launch_data_preparation import extract_and_prepare_data
+from tests.test_league_sert.test_data_preparaton.constants import TEST_WORD_FILES, COLLECTORS
 
 
 @pytest.mark.parametrize('file, expected_collector',

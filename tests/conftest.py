@@ -8,8 +8,8 @@ import pytest
 project_root = Path(__file__).resolve().parent.parent  # Adjust as needed
 sys.path.append(str(project_root))
 
-from protocols.league_sert.models.models import *
-from protocols.league_sert.models.models_creator import create_main_protocol
+from league_sert.models.models import *
+from league_sert.models.models_creator import create_main_protocol
 
 
 PROTOCOLS_DB = 'postgresql://RIMinullin:@localhost:5432/postgres'

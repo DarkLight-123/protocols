@@ -2,9 +2,9 @@
 import pytest
 import datetime
 
-from protocols.league_sert.models.exceptions import AttrNotFoundError
-from protocols.league_sert.models.models import MainProtocol
-from protocols.league_sert.models.models_creator import create_main_protocol
+from league_sert.models.exceptions import AttrNotFoundError
+from league_sert.models.models import MainProtocol
+from league_sert.models.models_creator import create_main_protocol
 
 
 @pytest.fixture(scope='module')

@@ -10,12 +10,12 @@
 import os
 import time
 
-from protocols.league_sert.constants import FRScreens, FINE_READER_PROCESS
+from league_sert.constants import FRScreens, FINE_READER_PROCESS
 
-from protocols.conversion.files_and_proc_utils import (
+from conversion.files_and_proc_utils import (
     return_or_create_dir, fetch_files_for_conversion)
 
-from protocols.conversion.screen_work import (
+from conversion.screen_work import (
     click_scr,
     launch_desktop_app,
     wait_fr_app_loading,
@@ -26,7 +26,7 @@ from protocols.conversion.screen_work import (
     click_convert_blue_button,
     check_save_image)
 
-from protocols.conversion.screen_work import pick_all_files
+from conversion.screen_work import pick_all_files
 
 
 def fetch_all_files_to_convert(path_to_dir_pdf: str,

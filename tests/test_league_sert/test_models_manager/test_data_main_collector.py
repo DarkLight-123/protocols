@@ -1,7 +1,7 @@
 """ Объект класса MainCollector с уже собранными данными,
 для проведения тестов."""
 
-from protocols.league_sert.data_preparation.file_parser import MainCollector
+from league_sert.data_preparation.file_parser import MainCollector
 
 
 def full_main_collector():

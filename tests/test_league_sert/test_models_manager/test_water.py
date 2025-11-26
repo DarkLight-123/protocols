@@ -1,7 +1,7 @@
 import pytest
 
-from protocols.league_sert.models.models import Water
-from protocols.league_sert.models.models_creator import create_water
+from league_sert.models.models import Water
+from league_sert.models.models_creator import create_water
 
 
 @pytest.fixture(scope='function')

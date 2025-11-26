@@ -5,7 +5,7 @@
 from sqlalchemy import text
 import pandas as pd
 
-from protocols.database.db_config_postgres import protocols_engine
+from database.db_config_postgres import protocols_engine
 
 
 QUERY_ALL = """

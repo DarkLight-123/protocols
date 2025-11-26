@@ -9,14 +9,14 @@ print(BASE_DIR)
 if BASE_DIR not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
-from protocols.compress_pdfs.compress_file_aspose_pdf import compress_files_in_dir
+from compress_pdfs.compress_file_aspose_pdf import compress_files_in_dir
 from cli_db_manager import cli_db_manager
 from utils import divider, get_dir_from_user
-from protocols.conversion.convert_files_all import convert_all_pdf_in_dir_to_docx
-from protocols.conversion.remove_pages_in_pdf import remove_pdf_pages
-from protocols.league_sert.db_operations.db_writer import write_files_to_db_from_dir
-from protocols.league_sert.manual_entry.db_writer_debug import write_files_to_db_from_dir_debug
-from protocols.rename_files.rename_files import rename_the_files_in_dir
+from conversion.convert_files_all import convert_all_pdf_in_dir_to_docx
+from conversion.remove_pages_in_pdf import remove_pdf_pages
+from league_sert.db_operations.db_writer import write_files_to_db_from_dir
+from league_sert.manual_entry.db_writer_debug import write_files_to_db_from_dir_debug
+from rename_files.rename_files import rename_the_files_in_dir
 
 
 def main_cli():

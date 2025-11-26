@@ -8,11 +8,11 @@
 import re
 from typing import Dict
 
-from protocols.league_sert.constants import FIX_KEYS_MAIN_PROT, FIX_KEYS_SAMPLE
-from protocols.league_sert.data_preparation.process_tables import process_the_tables
-from protocols.league_sert.data_preparation.add_conclusions import add_conclusions_for_all_tables
-from protocols.league_sert.data_preparation.file_parser import MainCollector
-from protocols.league_sert.data_preparation.merge_tables import refine_and_merge_tables
+from league_sert.constants import FIX_KEYS_MAIN_PROT, FIX_KEYS_SAMPLE
+from league_sert.data_preparation.process_tables import process_the_tables
+from league_sert.data_preparation.add_conclusions import add_conclusions_for_all_tables
+from league_sert.data_preparation.file_parser import MainCollector
+from league_sert.data_preparation.merge_tables import refine_and_merge_tables
 
 
 def extract_and_prepare_data(word_file):

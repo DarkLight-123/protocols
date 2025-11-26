@@ -3,8 +3,8 @@ import datetime
 
 import pytest
 
-from protocols.league_sert.models.models import ProdControl
-from protocols.league_sert.models.models_creator import create_prod_control
+from league_sert.models.models import ProdControl
+from league_sert.models.models_creator import create_prod_control
 
 
 @pytest.fixture(scope='module')

@@ -5,10 +5,10 @@ import re
 import sys
 from pathlib import Path
 
-from protocols.league_sert.data_preparation.file_parser import MainCollector
-from protocols.league_sert.manual_entry.manual_handlers_exceptions import (
+from league_sert.data_preparation.file_parser import MainCollector
+from league_sert.manual_entry.manual_handlers_exceptions import (
     get_address_and_code_handler, get_sampling_date_handler)
-from protocols.league_sert.models.models_creator import (
+from league_sert.models.models_creator import (
     create_date, split_code_and_address, validate_attribute, create_instance, \
     ObjectsForDB, create_objects_same_cls)
 
@@ -16,7 +16,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 if BASE_DIR not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
-from protocols.league_sert.models.models import MainProtocol
+from league_sert.models.models import MainProtocol
 
 
 @create_instance

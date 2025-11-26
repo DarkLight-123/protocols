@@ -1,8 +1,8 @@
 import pytest
 
-from protocols.league_sert.models.exceptions import AttrNotFoundError
-from protocols.league_sert.models.models import Air
-from protocols.league_sert.models.models_creator import create_air
+from league_sert.models.exceptions import AttrNotFoundError
+from league_sert.models.models import Air
+from league_sert.models.models_creator import create_air
 
 
 @pytest.fixture(scope='module')

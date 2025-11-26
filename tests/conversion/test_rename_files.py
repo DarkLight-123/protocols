@@ -1,7 +1,7 @@
 import pytest
 
-from protocols.rename_files.rename_files import get_store_code, search_code
-from protocols.tests.test_league_sert.test_data_preparaton.constants import TEST_WORD_FILES
+from rename_files.rename_files import get_store_code, search_code
+from tests.test_league_sert.test_data_preparaton.constants import TEST_WORD_FILES
 
 
 @pytest.mark.parametrize('test_file, expected_store_code',

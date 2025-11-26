@@ -32,9 +32,9 @@ import psutil
 #import pyautogui
 import pyperclip
 
-from protocols.league_sert.constants import FRScreens
-from protocols.conversion.exceptions import ScreenshotNotFoundError
-from protocols.conversion.files_and_proc_utils import change_keyboard_layout_on_english, hide_the_windows
+from league_sert.constants import FRScreens
+from conversion.exceptions import ScreenshotNotFoundError
+from conversion.files_and_proc_utils import change_keyboard_layout_on_english, hide_the_windows
 
 
 def get_absolute_scr_path(filename: str) -> str:

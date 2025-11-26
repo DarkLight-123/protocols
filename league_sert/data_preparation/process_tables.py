@@ -9,8 +9,8 @@
 """
 import re
 
-from protocols.league_sert.constants import WordsPatterns, TEST_OBJECT
-from protocols.league_sert.data_preparation.add_conclusions import find_out_results_table_type
+from league_sert.constants import WordsPatterns, TEST_OBJECT
+from league_sert.data_preparation.add_conclusions import find_out_results_table_type
 
 
 NAME = WordsPatterns.NAME.value

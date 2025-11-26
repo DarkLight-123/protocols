@@ -1,10 +1,10 @@
 """ Тестирование модуля merge_tables. """
 import pytest
 
-from protocols.league_sert.data_preparation.merge_tables import (
+from league_sert.data_preparation.merge_tables import (
     join_sample_and_results, remove_results_table, refine_and_merge_tables)
 
-from protocols.tests.test_league_sert.test_data_preparaton.data_for_test.test_data_for_merge import (
+from tests.test_league_sert.test_data_preparaton.data_for_test.test_data_for_merge import (
     data_input_for_merge_1, DATA_FOR_MERGE)
 
 

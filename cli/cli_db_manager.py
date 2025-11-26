@@ -12,9 +12,9 @@ if BASE_DIR not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
 from utils import divider
-from protocols.database.base import Base
-from protocols.database.db_config_postgres import protocols_engine, prot_session_maker
-from protocols.database.db_manager import DBManager
+from database.base import Base
+from database.db_config_postgres import protocols_engine, prot_session_maker
+from database.db_manager import DBManager
 
 load_dotenv()
 

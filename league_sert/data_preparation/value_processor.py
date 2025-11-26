@@ -28,8 +28,8 @@ enum классы:
 import re
 from typing import Any
 
-from protocols.league_sert.constants import ComparTypes, DIGITS_IN_DEGREE, ConvertValueTypes
-from protocols.league_sert.data_preparation.exceptions import DetermineValueTypeError
+from league_sert.constants import ComparTypes, DIGITS_IN_DEGREE, ConvertValueTypes
+from league_sert.data_preparation.exceptions import DetermineValueTypeError
 
 
 class ValueProcessor:

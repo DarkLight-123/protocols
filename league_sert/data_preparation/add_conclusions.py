@@ -24,11 +24,11 @@
 """
 import re
 
-from protocols.comparator.comparator import create_conformity_conclusion
-from protocols.league_sert.constants import WordsPatterns as words, WRONG_PARTS_IN_ROW, TypesOfTable
-from protocols.league_sert.data_preparation.exceptions import TypeOfIndicatorTableError, NoneConformityError
-from protocols.league_sert.data_preparation.file_parser import check_wrong_parts_in_row
-from protocols.league_sert.data_preparation.fix_the_values import fix_spelling_errors
+from comparator.comparator import create_conformity_conclusion
+from league_sert.constants import WordsPatterns as words, WRONG_PARTS_IN_ROW, TypesOfTable
+from league_sert.data_preparation.exceptions import TypeOfIndicatorTableError, NoneConformityError
+from league_sert.data_preparation.file_parser import check_wrong_parts_in_row
+from league_sert.data_preparation.fix_the_values import fix_spelling_errors
 
 
 NAME = words.NAME.value

@@ -5,9 +5,9 @@
 """
 import pytest
 
-from protocols.league_sert.models.models import MainProtocol, ProdControl, ManufProd, Air, StoreProd, Washings
-from protocols.league_sert.models.models_creator import create_common_violations, create_all_objects
-from protocols.tests.test_league_sert.test_models_manager.test_data_main_collector import full_main_collector
+from league_sert.models.models import MainProtocol, ProdControl, ManufProd, Air, StoreProd, Washings
+from league_sert.models.models_creator import create_common_violations, create_all_objects
+from tests.test_league_sert.test_models_manager.test_data_main_collector import full_main_collector
 
 
 data_proc_viol = {'indicators': [{'violations_of_norms': (True, True)},

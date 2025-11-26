@@ -3,8 +3,8 @@
 """
 import pytest
 
-from protocols.league_sert.models.models import ManufProd
-from protocols.league_sert.models.models_creator import create_manuf_prod
+from league_sert.models.models import ManufProd
+from league_sert.models.models_creator import create_manuf_prod
 
 
 @pytest.fixture(scope='module')

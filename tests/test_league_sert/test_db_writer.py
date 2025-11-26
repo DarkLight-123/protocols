@@ -2,15 +2,15 @@ from datetime import datetime
 
 import pytest
 
-from protocols.league_sert.data_preparation.launch_data_preparation import (
+from league_sert.data_preparation.launch_data_preparation import (
     extract_and_prepare_data)
-from protocols.league_sert.db_operations.db_writer import (
+from league_sert.db_operations.db_writer import (
     _write_objects_from_file_to_db)
-from protocols.league_sert.models.models import (
+from league_sert.models.models import (
     MainProtocol, ManufProd, Air, Washings, StoreProd, ProdControl)
-from protocols.league_sert.models.models_creator import (
+from league_sert.models.models_creator import (
     create_all_objects)
-from protocols.tests.test_league_sert.test_data_preparaton.constants import (
+from tests.test_league_sert.test_data_preparaton.constants import (
     TEST_WORD_FILES)
 
 

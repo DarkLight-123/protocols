@@ -34,18 +34,18 @@ from pathlib import Path
 from typing import Dict, Tuple, Union, List
 from datetime import datetime, date
 
-from protocols.league_sert.constants import MONTHS, TABLE_TYPES_IN_RUS
-from protocols.league_sert.data_preparation.exceptions import AddressNotFoundError
-from protocols.league_sert.data_preparation.file_parser import MainCollector
-from protocols.league_sert.exceptions import TypeIndicatorsError
-from protocols.league_sert.manual_entry.exceptions import MissedKeyCreateInstError
-from protocols.league_sert.models.exceptions import AttrNotFoundError
+from league_sert.constants import MONTHS, TABLE_TYPES_IN_RUS
+from league_sert.data_preparation.exceptions import AddressNotFoundError
+from league_sert.data_preparation.file_parser import MainCollector
+from league_sert.exceptions import TypeIndicatorsError
+from league_sert.manual_entry.exceptions import MissedKeyCreateInstError
+from league_sert.models.exceptions import AttrNotFoundError
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 if BASE_DIR not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
-from protocols.league_sert.models.models import (MainProtocol, ManufProd, Air, Water,
+from league_sert.models.models import (MainProtocol, ManufProd, Air, Water,
                                        ProdControl, Washings, StoreProd)
 
 

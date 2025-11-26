@@ -16,13 +16,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 if BASE_DIR not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
-from protocols.database.db_config_postgres import PROTOCOLS_DB
-from protocols.league_sert.data_preparation.launch_data_preparation import extract_and_prepare_data
-from protocols.league_sert.exceptions import DirDontExistError
-from protocols.league_sert.models.models import MainProtocol
-from protocols.league_sert.models.models_creator import ObjectsForDB, create_all_objects
-from protocols.league_sert.constants import RECORDED_FILE
-from protocols.league_sert.db_operations.file_utils import read_viewed_from_file, move_unrecorded_files
+from database.db_config_postgres import PROTOCOLS_DB
+from league_sert.data_preparation.launch_data_preparation import extract_and_prepare_data
+from league_sert.exceptions import DirDontExistError
+from league_sert.models.models import MainProtocol
+from league_sert.models.models_creator import ObjectsForDB, create_all_objects
+from league_sert.constants import RECORDED_FILE
+from league_sert.db_operations.file_utils import read_viewed_from_file, move_unrecorded_files
 
 
 global_process_engine = None

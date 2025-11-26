@@ -6,8 +6,8 @@ import re
 import docx
 from docx2txt import docx2txt
 
-from protocols.conversion.exceptions import NumbDateNotFoundError
-from protocols.league_sert.constants import PattNumbAndDateByParts, PattNumbDate, MONTHS
+from conversion.exceptions import NumbDateNotFoundError
+from league_sert.constants import PattNumbAndDateByParts, PattNumbDate, MONTHS
 
 
 def form_date(result: dict) -> str:

@@ -8,8 +8,8 @@ from pathlib import Path
 
 import aspose.pdf as ap
 
-from protocols.conversion.files_and_proc_utils import return_or_create_dir
-from protocols.league_sert.db_operations.file_utils import read_viewed_from_file
+from conversion.files_and_proc_utils import return_or_create_dir
+from league_sert.db_operations.file_utils import read_viewed_from_file
 
 
 COMPRESSED_FILES = r'.\compress_pdfs\compressed_files.txt'

@@ -1,5 +1,5 @@
 """ Исключения для моделей и процесса их создания."""
-from protocols.league_sert.exceptions import MyException
+from league_sert.exceptions import MyException
 
 
 class AttrNotFoundError(MyException):

@@ -52,7 +52,7 @@ from pathlib import Path
 from docx import Document
 from docx2txt import docx2txt
 
-from protocols.league_sert.constants import (FRScreens,
+from league_sert.constants import (FRScreens,
                                    FINE_READER_PROCESS,
                                    PattNumbDate,
                                    ProdControlPatt)

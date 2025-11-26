@@ -10,7 +10,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, Date
 from sqlalchemy.orm import relationship
 
-from protocols.database.base import Base
+from database.base import Base
 
 
 class MainProtocol(Base):

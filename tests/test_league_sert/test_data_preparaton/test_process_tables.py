@@ -8,8 +8,8 @@ import re
 
 import pytest
 
-from protocols.league_sert.constants import TEST_OBJECT
-from protocols.league_sert.data_preparation.process_tables import (
+from league_sert.constants import TEST_OBJECT
+from league_sert.data_preparation.process_tables import (
     rm_blank_rows_in_tab, rm_first_col_if_blank, join_split_rows,
     divide_the_table, fix_centimeter_cell, join_divided_sample_code, join_from_2_cols_to_1)
 

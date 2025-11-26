@@ -62,8 +62,8 @@ import py_win_keyboard_layout
 import psutil
 import pygetwindow as gw
 
-from protocols.conversion.exceptions import PathNotInputError, InvalidPathError, PageNeedToRMError
-from protocols.league_sert.constants import FRScreens
+from conversion.exceptions import PathNotInputError, InvalidPathError, PageNeedToRMError
+from league_sert.constants import FRScreens
 
 
 def change_keyboard_layout_on_english():

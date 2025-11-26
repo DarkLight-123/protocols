@@ -26,8 +26,8 @@
 """
 import re
 
-from protocols.league_sert.constants import FIX_KEYS_OBJECT_MERGE, TABLE_TYPES_IN_RUS
-from protocols.league_sert.manual_entry.exceptions import MissedTableError
+from league_sert.constants import FIX_KEYS_OBJECT_MERGE, TABLE_TYPES_IN_RUS
+from league_sert.manual_entry.exceptions import MissedTableError
 
 Tables = dict[tuple[int, str]: dict[str]]
 

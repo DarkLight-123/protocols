@@ -1,6 +1,6 @@
 import pytest
 
-from protocols.league_sert.data_preparation.fix_the_values import fix_spelling_errors
+from league_sert.data_preparation.fix_the_values import fix_spelling_errors
 
 
 @pytest.mark.parametrize('value, expected', [

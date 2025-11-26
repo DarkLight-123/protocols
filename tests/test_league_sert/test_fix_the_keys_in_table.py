@@ -1,7 +1,7 @@
 import pytest
 
-from protocols.league_sert.constants import FIX_KEYS_SAMPLE
-from protocols.league_sert.data_preparation.launch_data_preparation import _fix_the_keys_in_table
+from league_sert.constants import FIX_KEYS_SAMPLE
+from league_sert.data_preparation.launch_data_preparation import _fix_the_keys_in_table
 
 sample_object_dict = {'Объект исследования': 0}
 prod_group = {'Группа продукции': 0}
