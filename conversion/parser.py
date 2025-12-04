@@ -1,7 +1,7 @@
 import re
 from dataclasses import dataclass
 from typing import List, Dict, Any
-
+import subprocess
 
 # ================================
 # 1) Вспомогательные структуры
@@ -166,3 +166,46 @@ def parse_page(ocr_items: List[Dict[str, Any]]) -> Dict[str, Any]:
         "header": header,
         "indicators": indicators
     }
+from pathlib import Path
+import json
+import subprocess
+import tempfile
+
+
+def parse_pdf_to_json(pdf_path: str | Path) -> Path:
+    """
+    Выполнить OCR Surya и получить parsed_result.json.
+    Возвращает путь к json-файлу.
+    """
+
+    pdf_path = Path(pdf_path)
+    if not pdf_path.exists():
+        raise FileNotFoundError(f"PDF файл не найден: {pdf_path}")
+
+    # Временная директория для OCR результата
+    out_dir = Path(tempfile.mkdtemp(prefix="surya_out_"))
+
+    json_path = out_dir / "parsed_result.json"
+
+    # Вызов Surya OCR через subprocess
+    cmd = [
+        "surya-ocr",
+        "layout",
+        str(pdf_path),
+        "--out", str(json_path)
+    ]
+
+    print("🔥 Запускаю OCR Surya...")
+    result = subprocess.run(cmd, capture_output=True, text=True)
+
+    if result.returncode != 0:
+        print("Ошибка OCR Surya:")
+        print(result.stderr)
+        raise RuntimeError("Surya OCR failed")
+
+    if not json_path.exists():
+        raise RuntimeError("OCR завершён, но parsed_result.json не найден")
+
+    print(f"✔ OCR завершён. JSON сохранён: {json_path}")
+    return json_path
+
