@@ -34,9 +34,13 @@ def parse_pdf(pdf_path: Path, save_json: bool = True) -> dict:
 
     # 2. По желанию — сохраняем рядом JSON
     if save_json:
-        json_path = pdf_path.with_suffix(".json")
+        out_json_dir = Path("results/surya") / pdf_path.stem
+        out_json_dir.mkdir(parents=True, exist_ok=True)
+
+        json_path = out_json_dir / "results.json"
         with json_path.open("w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
+
         print(f"✅ Результат сохранён в: {json_path}")
 
     # 3. Печатаем в консоль для быстрой проверки

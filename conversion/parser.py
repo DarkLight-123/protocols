@@ -1,7 +1,10 @@
 import re
-from dataclasses import dataclass
-from typing import List, Dict, Any
+import json
 import subprocess
+from dataclasses import dataclass
+from pathlib import Path
+from typing import List, Dict, Any
+
 
 # ================================
 # 1) Вспомогательные структуры
@@ -27,28 +30,21 @@ class Row:
 # ================================
 
 def normalize(text: str) -> str:
-    """Слегка чистим текст OCR."""
+    """Чистим текст OCR."""
     if not text:
         return ""
     text = text.replace("•", "x").replace("■", "x").replace("х", "x").replace("Х", "x")
-    text = text.replace("±", "±")
     return text.strip()
 
 
 def merge_rows(ocr_items: List[Dict[str, Any]], y_threshold: float = 10.0) -> List[Row]:
-    """
-    Группируем объекты OCR от Surya по строкам на основе Y координат.
-    """
     rows: List[Row] = []
 
-    # Сортируем по вертикали (сверху вниз)
     items = [
         OCRItem(
             text=normalize(obj["text"]),
-            x0=obj["x0"],
-            y0=obj["y0"],
-            x1=obj["x1"],
-            y1=obj["y1"]
+            x0=obj["x0"], y0=obj["y0"],
+            x1=obj["x1"], y1=obj["y1"]
         )
         for obj in ocr_items
         if normalize(obj.get("text", "")) not in ["", None]
@@ -67,7 +63,6 @@ def merge_rows(ocr_items: List[Dict[str, Any]], y_threshold: float = 10.0) -> Li
         else:
             rows.append(Row(y=item.y0, items=[item]))
 
-    # внутри строки — сортируем элементы слева направо
     for r in rows:
         r.items.sort(key=lambda i: i.x0)
 
@@ -75,21 +70,14 @@ def merge_rows(ocr_items: List[Dict[str, Any]], y_threshold: float = 10.0) -> Li
 
 
 def row_to_text(row: Row) -> str:
-    """Объединяем элементы строки в один текст (слева направо)."""
     return " ".join(i.text for i in row.items).strip()
 
 
 def split_into_columns(row: Row) -> List[str]:
-    """
-    Пробуем определить логические колонки в таблице.
-    Это критический момент — он делает модели устойчивыми.
-    """
     positions = [i.x0 for i in row.items]
     if not positions:
         return [row_to_text(row)]
 
-    # Heuristic:
-    # если расстояние между словами > 120 px — считаем новой колонкой
     cols = []
     current = [row.items[0].text]
 
@@ -105,107 +93,117 @@ def split_into_columns(row: Row) -> List[str]:
 
 
 # ================================
-# 3) Основной парсер страницы
+# 3) Поиск правильного results.json
 # ================================
 
-def parse_page(ocr_items: List[Dict[str, Any]]) -> Dict[str, Any]:
+def find_surya_json(output_dir: Path) -> Path:
     """
-    Главный метод:
-    - группируем строки
-    - восстанавливаем "таблицу"
-    - определяем хедер
-    - определяем показатели (name, norm, result)
+    Surya создаёт вложенную папку → мы ищем results.json рекурсивно.
+    Возвращаем НЕ пустой файл.
     """
-    rows = merge_rows(ocr_items)
+    candidates = list(output_dir.rglob("results.json"))
+    if not candidates:
+        raise RuntimeError("❌ Surya не создала results.json вообще")
 
-    table = [split_into_columns(r) for r in rows]
+    for path in candidates:
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            if data:  # непустой JSON
+                return path
+        except Exception:
+            continue
 
-    header = {}
-    indicators = []
+    return candidates[0]
 
-    # Определим, где заканчивается header
-    header_limit = 0
-    for r in table:
-        text = " ".join(r).lower()
-        if any(k in text for k in ["массовая доля", "кислоты", "%", "доля", "норма"]):
-            break
-        header_limit += 1
 
-    # HEADER
-    header_rows = table[:header_limit]
-    for r in header_rows:
-        line = " ".join(r)
-        if ":" in line:
-            k, v = line.split(":", 1)
-            header[k.strip()] = v.strip()
-        else:
-            # заголовки без ключей тоже сохраним
-            header.setdefault("raw", []).append(line)
+# ================================
+# 4) Извлечение строк из JSON Surya
+# ================================
 
-    # INDICATORS
-    indicator_rows = table[header_limit:]
+def extract_lines_from_surya(surya_json: dict) -> list[dict]:
+    """
+    Surya даёт структуру вида:
 
-    for r in indicator_rows:
-        if len(r) == 1:
-            name = r[0]
-            indicators.append({"name": name, "norm": None, "result": None})
-        elif len(r) == 2:
-            name, value = r
-            # пытаемся угадать (норма или результат)
-            if re.search(r"\d", value):
-                indicators.append({"name": name, "norm": None, "result": value})
-            else:
-                indicators.append({"name": name, "norm": value, "result": None})
-        elif len(r) >= 3:
-            name = r[0]
-            norm = r[1]
-            res = r[2]
-            indicators.append({"name": name, "norm": norm, "result": res})
+    {
+        "<обрезанное_имя_pdf>": [
+            { "text_lines": [...] },
+            ...
+        ]
+    }
+
+    Нужно:
+      ✔ взять первый ключ
+      ✔ пройтись по каждой странице
+      ✔ вытянуть item["text"]
+    """
+
+    if not isinstance(surya_json, dict):
+        raise ValueError("❌ Неверный формат Surya JSON — ожидается объект dict")
+
+    keys = list(surya_json.keys())
+    if not keys:
+        return []
+
+    first_key = keys[0]
+    page_list = surya_json[first_key]  # это список страниц
+
+    if not isinstance(page_list, list):
+        raise ValueError("❌ Surya JSON: ожидается список страниц внутри ключа")
+
+    pages_output = []
+
+    for idx, page in enumerate(page_list, start=1):
+
+        # Страница может быть строкой — это баг Surya → пропускаем
+        if not isinstance(page, dict):
+            continue
+
+        lines = []
+        for item in page.get("text_lines", []):
+            if not isinstance(item, dict):
+                continue
+            text = item.get("text", "").strip()
+            if text:
+                lines.append(text)
+
+        pages_output.append({
+            "page": idx,
+            "lines": lines
+        })
+
+    return pages_output
+
+
+# ================================
+# 5) Главная функция — PARSER API
+# ================================
+
+def parse_pdf_to_json(pdf_path: str) -> dict:
+    """
+    Полный цикл:
+      1) Запуск Surya OCR
+      2) Поиск нужного results.json
+      3) Извлечение строк
+      4) Возврат в нормальном формате
+    """
+
+    pdf_path = Path(pdf_path).resolve()
+    out_dir = Path("results/surya") / pdf_path.stem
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    cmd = ["surya_ocr", str(pdf_path), "--output_dir", str(out_dir)]
+    print("🔥 Запускаю OCR Surya...")
+    print(f"⚙️ Команда: {' '.join(cmd)}")
+
+    subprocess.run(cmd, check=True)
+
+    json_path = find_surya_json(out_dir)
+    print(f"✅ Найден корректный OCR JSON: {json_path}")
+
+    surya_json = json.loads(json_path.read_text(encoding="utf-8"))
+    pages = extract_lines_from_surya(surya_json)
 
     return {
-        "header": header,
-        "indicators": indicators
+        "file": pdf_path.name,
+        "pages": pages
     }
-from pathlib import Path
-import json
-import subprocess
-import tempfile
-
-
-def parse_pdf_to_json(pdf_path: str | Path) -> Path:
-    """
-    Выполнить OCR Surya и получить parsed_result.json.
-    Возвращает путь к json-файлу.
-    """
-
-    pdf_path = Path(pdf_path)
-    if not pdf_path.exists():
-        raise FileNotFoundError(f"PDF файл не найден: {pdf_path}")
-
-    # Временная директория для OCR результата
-    out_dir = Path(tempfile.mkdtemp(prefix="surya_out_"))
-
-    json_path = out_dir / "parsed_result.json"
-
-    # Вызов Surya OCR через subprocess
-    cmd = [
-        "surya-ocr",
-        "layout",
-        str(pdf_path),
-        "--out", str(json_path)
-    ]
-
-    print("🔥 Запускаю OCR Surya...")
-    result = subprocess.run(cmd, capture_output=True, text=True)
-
-    if result.returncode != 0:
-        print("Ошибка OCR Surya:")
-        print(result.stderr)
-        raise RuntimeError("Surya OCR failed")
-
-    if not json_path.exists():
-        raise RuntimeError("OCR завершён, но parsed_result.json не найден")
-
-    print(f"✔ OCR завершён. JSON сохранён: {json_path}")
-    return json_path
-
